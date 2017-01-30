@@ -3,7 +3,7 @@
 
     angular.module('app')
         .constant('myConfig', {
-            api: 'http://projeto.dev/api',
+            api: window.location.origin + '/api',
         });
 
     angular.module('core')

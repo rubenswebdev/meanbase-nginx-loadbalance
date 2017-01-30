@@ -1,4 +1,6 @@
 ### Estrutura básica para criar um sistema com MEAN modular, login já incluído.
+sudo nginx-manager -d /var/www/projetos/meanbase/frontend/ -u meanbasenginx.dev -n meanbasenginx -p 10
+
 
 ---
 ### Requer devidamente instalado
