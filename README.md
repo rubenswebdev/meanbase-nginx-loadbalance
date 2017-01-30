@@ -1,28 +1,24 @@
 ### Estrutura básica para criar um sistema com MEAN modular, login já incluído.
-sudo nginx-manager -d /var/www/projetos/meanbase/frontend/ -u meanbasenginx.dev -n meanbasenginx -p 10
-
 
 ---
 ### Requer devidamente instalado
 
 * Apache2
-    * sudo apt-get install libapache2-mod-proxy-html libxml2-dev
+    * sudo apt-get install nginx
 * MongoDB
 * NodeJS
 
 ---
 
-* na pasta **docs** contém o template padrão para criar o vhost no apache usando o [vhost-manager](https://github.com/rubensfernandes/vhost-manager)
+* crie a config do host usando o [nginx-manager](https://github.com/rubensfernandes/nginx-manager) basta rodar
 
-```javascript
-\backend
-	\app //contém a aplicação em NodeJS
-\docs
-\frontend
-	\app //contém a aplicação em AngularJS
-	\dist
+```
+sudo npm install -g nginx-manager
+sudo nginx-manager -d /var/www/projetos/meanbase/frontend/ -u meanbasenginx.dev -n meanbasenginx -p 20
 ```
 
+* Observe que para porta colocamos apenas a inicial, se sua porta é 2020 você deve colocar apenas o 20, o nginx-manager vai gerar as portas na sequência, ex:
+2020 2021 2022 2023
 
 * Na pasta **frontend**
 
@@ -31,36 +27,10 @@ bower install
 npm install
 ```
 
-* Agora vamos criar uma Url para acessar seu projeto pelo navegador, dentro da pasta docs temos o arquivo template.conf, ele serve para criar um virtual host no apache, se você usa outro servidor tem que configurar uma rota de proxy para a porta que vai usar no backend, altere apenas a porta no template.
-
-```xml
-<VirtualHost *:80>
-    ServerName template.url
-    ServerAlias template.url
-
-    DocumentRoot template.webroot
-
-	ProxyRequests on
-	ProxyPass /api http://localhost:4040
-</VirtualHost>
-```
-
-* Na pasta **docs**
-
-```
-sudo vhost -d /var/www/pasta_raiz/frontend -url projeto.dev -t template.conf nome_do_projeto
-```
-
-> Se for na **PRODUÇÃO** rode na pasta **frontend**
+> Se for na **PRODUÇÃO** rode na pasta **frontend** e não esqueça de criar a config do host apontando pra pasta **dist** dentro de frontend
 
 ```
 grunt
-```
-> e no vhost configure o **-d** para ser a pasta **dist** dentro da pasta frontend ficando assim
-
-```
-sudo vhost -d /var/www/pasta_raiz/frontend/dist -url projeto.com.br -t template.conf nome_do_projeto
-
 ```
 
 * Na pasta **frontend** duplique o arquivo **config.js.dist** para **config.js** e edite conforme configurou sua url do projeto
@@ -71,7 +41,7 @@ sudo vhost -d /var/www/pasta_raiz/frontend/dist -url projeto.com.br -t template.
 
     angular.module('app')
         .constant('myConfig', {
-            api: 'http://projeto.dev/api',
+            api: window.location.origin + '/api',
         });
 
     angular.module('core')
@@ -79,7 +49,6 @@ sudo vhost -d /var/www/pasta_raiz/frontend/dist -url projeto.com.br -t template.
             cache: true,
         });
 })();
-
 ```
 
 
@@ -103,23 +72,26 @@ module.exports = {
     secret: 'token_aleatorio_para_o_jwt',
     database: 'mongodb://127.0.0.1:27017/meanbase',
     uploadPath: '/var/www/projeto/frontend/uploads/',
-    port: 4040,
+    initialPort: 2020,
  	passFixture: 'senha_para_fixture',
 };
 
 ```
 
-> atenção na **port** tem que ser a mesma que se encontra no **template.conf** dentro da pasta **docs**
+> atenção na **initialPort** tem que ser a mesma usada na hora de criar a config do nginx
 
-* dentro da pasta **backend**, iniciamos nosso servidor
+* dentro da pasta **backend**, iniciamos nosso servidor, so use o --node-args caso seu sistema esteja fazendo uso muito intenso de memória RAM
 
 ```
-node index.js
+pm2 start start.js --name="meanbase" --node-args="--max-old-space-size=6144" --watch
 ```
 
-> se tudo foi configurado corretamente irá aparecer algo como
+> se tudo foi configurado corretamente irá aparecer algo como, depende da quantidade de processadores da máquina
 ```
-Server start: 4040
+Server start: 2020
+Server start: 2021
+Server start: 2022
+Server start: 2023
 ```
 
 ## Agora vamos criar o usuário admin para logar no sistema
