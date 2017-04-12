@@ -3,7 +3,7 @@
 ---
 ### Requer devidamente instalado
 
-* Apache2
+* Nginx
     * sudo apt-get install nginx
 * MongoDB
 * NodeJS
@@ -14,7 +14,7 @@
 
 ```
 sudo npm install -g nginx-manager
-sudo nginx-manager -d /var/www/projetos/meanbase/frontend/ -u meanbasenginx.dev -n meanbasenginx -p 20
+sudo nginx-manager -d /var/www/projetos/meanbase-nginx-loadbalance/frontend/ -u meanbasenginx.dev -n meanbasenginx -p 20
 ```
 
 * Observe que para porta colocamos apenas a inicial, se sua porta é 2020 você deve colocar apenas o 20, o nginx-manager vai gerar as portas na sequência, ex:
@@ -34,6 +34,7 @@ grunt
 ```
 
 * Na pasta **frontend** duplique o arquivo **config.js.dist** para **config.js** e edite conforme configurou sua url do projeto
+* ela ja pega a url default que você deixou rodando na config do vhost
 
 ```javascript
 (function () {
@@ -52,7 +53,7 @@ grunt
 ```
 
 
-> se tudo foi configurado certo acesse: projeto.dev e você verá uma tela de login parecida com essa:
+> se tudo foi configurado certo acesse: meanbasenginx.dev e você verá uma tela de login parecida com essa:
 
 ![tela de login](./__ignore__/foto1.png "Logo Title Text 1")
 
@@ -71,7 +72,7 @@ npm install
 module.exports = {
     secret: 'token_aleatorio_para_o_jwt',
     database: 'mongodb://127.0.0.1:27017/meanbase',
-    uploadPath: '/var/www/projeto/frontend/uploads/',
+    uploadPath: '/var/www/projetos/meanbase-nginx-loadbalance/frontend/uploads/',
     initialPort: 2020,
  	passFixture: 'senha_para_fixture',
 };
@@ -83,9 +84,9 @@ module.exports = {
 * dentro da pasta **backend**, iniciamos nosso servidor, so use o --node-args caso seu sistema esteja fazendo uso muito intenso de memória RAM
 
 ```
-pm2 start start.js --name="meanbase" --node-args="--max-old-space-size=6144" --watch
+pm2 start start.js --name="meanbase" --watch
 ```
-
+* o watch serve para que ele reinicie o server automaticamente a cada save, você pode usar o nodemon se desejar, basta rodar na pasta backend **nodemon**
 > se tudo foi configurado corretamente irá aparecer algo como, depende da quantidade de processadores da máquina
 ```
 Server start: 2020
@@ -96,10 +97,14 @@ Server start: 2023
 
 ## Agora vamos criar o usuário admin para logar no sistema
 
-* pelo navegador acesse: projeto.dev/api/fixture/usuario/senha_para_fixture
+* pelo navegador acesse: meanbasenginx.dev/api/fixture/usuario/senha_para_fixture
 
 > **senha_para_fixture** é configurada no arquivo de config.js do backend
 
 ---
 
 :airplane: Pronto agora você pode acessar a url do projeto e logar com o usuário: **admin** e a senha: **admin** :airplane:
+
+* Qualquer dúvida me escreve um email, vou ajudar com todo prazer.
+
+rubensdrk@gmail.com
