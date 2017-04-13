@@ -108,3 +108,7 @@ Server start: 2023
 * Qualquer dúvida me escreve um email, vou ajudar com todo prazer.
 
 rubensdrk@gmail.com
+
+## License
+
+[MIT License](http://rubensfernandes.mit-license.org/) © Rubens Fernandes
